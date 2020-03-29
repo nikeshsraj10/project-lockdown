@@ -1,3 +1,41 @@
+form {
+    font  : 1.3rem sans-serif;
+    padding : 0.5em;
+    margin  : 0 auto;
+    position : relative;
+    box-sizing: border-box;
+}
+
 .w100{
+    width: 100%;
+}
+.text{
+    width: 100%;
+    padding: 1% 1%;
+    margin: 1% 0;
+    box-sizing: border-box;
+}
+
+.left{
+    float: left;
+}
+
+.right{
+    float: right;
+}
+
+.focus:focus{
+    background-color: #78858a;
+}
+
+textarea{
+    resize: none;
+}
+
+.hidden{
+    display: none;
+}
+
+.react-datepicker-wrapper, .react-datepicker-wrapper input{
     width: 100%;
 }
