@@ -51,7 +51,7 @@ class FormsDemo extends Component {
     handleSexChange(event){
        const {name, value} = event.target; 
         this.setState({
-            sex: value == true
+            [name]: value == true
         })
     }
         

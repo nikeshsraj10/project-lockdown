@@ -1,0 +1,35 @@
+.page{
+    padding: 2% 2%;
+    margin: 1%;
+    box-sizing: border-box;
+}
+
+.heading{
+    text-align: initial;
+}
+
+.inline-block{
+    display: inline-block;
+}
+
+.icons{
+    position: relative;
+    max-width: 100px;
+    z-index: 2;
+}
+
+.left{
+    float: left;
+}
+
+.react-datepicker__input-container input {
+    width: 100% !important;
+}
+
+.react-datepicker-ignore-onclickoutside {
+    width: 100%;
+}
+
+.align-left{
+    text-align: left;
+}
