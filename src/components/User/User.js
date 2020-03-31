@@ -133,7 +133,6 @@ export default class User extends Component{
     }
 
     render(){
-        console.log(this.state.errorObj)
         return(
             <React.Fragment>
                 <div className={classes.page}>
