@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import axios from 'axios';
 import classes from './User.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -13,7 +13,7 @@ const initState = {
     firstName: '',
     lastName: '',
     email: '',
-    gender: 1,
+    gender: '',
     birthdate: null,
     country: COUNTRIES[0],
     mobile: '',
@@ -120,9 +120,25 @@ export default class User extends Component{
         const errorObj = this.validateForm();
         if(errorObj.formValid){
             console.log(this.state);
+            const user = {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                gender: this.state.gender,
+                birthdate: this.state.birthdate,
+                country: this.state.country,
+                mobile: this.state.mobile
+            }
+            axios.post('http://localhost:5000/users/add', user)
+                 .then(res => {
+                     console.log(res.data); 
+                     alert('User Added');
+                 })
+                 .catch(err => console.log(err));
             this.setState({
                 ...initState
             })
+            window.location = '/'
         }else{
             this.setState({
                 errorObj: {...errorObj}
@@ -194,27 +210,28 @@ export default class User extends Component{
                                     <div className="col-sm-12 mb-3">
                                     <label htmlFor="gender">Gender*: </label>
                                     <div className="form-group" data-toggle="buttons">
+                                        {this.state.gender}
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="male">
-                                             <input id="male" name="gender" type="radio"
+                                             <input id="male" name="gender" type="radio" value={1}
                                                     className="form-check-input" checked={this.state.gender === 1}
-                                                    onChange={() => this.handleGenderChange(1)} required />Male
+                                                    onChange={this.handlePersonalDetailsChange} required />Male
                                             </label>
                                             
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="female">
-                                                <input  id="female" name="gender" type="radio"
+                                                <input  id="female" name="gender" type="radio" value={0}
                                                         className="form-check-input" checked={this.state.gender === 0}
-                                                        onChange={() => this.handleGenderChange(0)} required />Female
+                                                        onChange={this.handlePersonalDetailsChange} required />Female
                                             </label>
                                             
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="unspecified">
-                                                 <input id="unspecified" name="gender" type="radio"
+                                                 <input id="unspecified" name="gender" type="radio" value={-1}
                                                         className="form-check-input" checked={this.state.gender === -1}
-                                                        onChange={() => this.handleGenderChange(-1)} required />Unspecified
+                                                        onChange={this.handlePersonalDetailsChange} required />Unspecified
                                             </label>
                                             
                                         </span>
