@@ -13,15 +13,17 @@ const initState = {
     firstName: '',
     lastName: '',
     email: '',
-    gender: '',
+    gender: 1,
     birthdate: null,
     country: COUNTRIES[0],
     mobile: '',
+    portraitURL: '',
     errorObj: {
         firstName: true,
         email: true,
         birthdate: true,
         mobile: true,
+        portraitURL: true,
         formValid: true
     }
 
@@ -34,16 +36,12 @@ export default class User extends Component{
     }
 
     handlePersonalDetailsChange = (event) => {
-        const {name, value} = event.target;
+        let {name, value} = event.target;
+        if(name === 'gender')
+            value = +value;
         this.setState({
             [name]: value
         })
-    }
-
-    handleGenderChange = (genderVal) => {
-        this.setState({
-            gender: genderVal
-        });
     }
 
     handleBirthdayChange = (date) => {
@@ -65,6 +63,7 @@ export default class User extends Component{
             email: false,
             birthdate: false,
             mobile: false,
+            portraitURL: true, //true because its not mandatory but if entered, it should be valid
             formValid: false
         }
         //firstName validation
@@ -105,7 +104,14 @@ export default class User extends Component{
             else
                 errorObj.mobile = false;
         }
-        if(errorObj.firstName && errorObj.mobile && errorObj.birthdate && errorObj.email){
+        if(this.state.portraitURL){
+            let regex = new RegExp(/\w+\.(jpg|jpeg|gif|png|tiff|bmp)$/, 'gi');
+            if(regex.test(this.state.portraitURL))
+                errorObj.portraitURL = true
+            else
+                errorObj.portraitURL = false;
+        }
+        if(errorObj.firstName && errorObj.mobile && errorObj.birthdate && errorObj.email && errorObj.portraitURL){
             //Form is Valid
             errorObj.formValid = true;
             return errorObj;
@@ -119,7 +125,6 @@ export default class User extends Component{
         event.preventDefault();
         const errorObj = this.validateForm();
         if(errorObj.formValid){
-            console.log(this.state);
             const user = {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
@@ -127,12 +132,12 @@ export default class User extends Component{
                 gender: this.state.gender,
                 birthdate: this.state.birthdate,
                 country: this.state.country,
-                mobile: this.state.mobile
+                mobile: this.state.mobile,
+                portraitURL: this.state.portraitURL
             }
             axios.post('http://localhost:5000/users/add', user)
                  .then(res => {
                      console.log(res.data); 
-                     alert('User Added');
                  })
                  .catch(err => console.log(err));
             this.setState({
@@ -145,7 +150,6 @@ export default class User extends Component{
             })
             return;
         }
-        console.log(this.state);
     }
 
     render(){
@@ -170,7 +174,7 @@ export default class User extends Component{
                     </div>
                     {/* Form Begins here */}
                     <div className="container">
-                        <div className="py-5 text-center pl-4">
+                        <div className="text-center pl-4">
                             <h2 className={classes['align-left']}>Your Personal Details</h2>
                         </div>
                         <div className="col-sm-12">
@@ -192,7 +196,7 @@ export default class User extends Component{
                                         <input  type="text" className="form-control" id="lastName" name="lastName"
                                                 placeholder="Last Name" value={this.state.lastName} maxLength="20"
                                                 onChange={this.handlePersonalDetailsChange}/>
-                                    </div>
+                                </div>
     
                                 </div>
                                 <div className="row">
@@ -209,11 +213,10 @@ export default class User extends Component{
                                 <div className="row">
                                     <div className="col-sm-12 mb-3">
                                     <label htmlFor="gender">Gender*: </label>
-                                    <div className="form-group" data-toggle="buttons">
-                                        {this.state.gender}
+                                    <div className="form-group">
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="male">
-                                             <input id="male" name="gender" type="radio" value={1}
+                                             <input name="gender" type="radio" value={1}
                                                     className="form-check-input" checked={this.state.gender === 1}
                                                     onChange={this.handlePersonalDetailsChange} required />Male
                                             </label>
@@ -221,7 +224,7 @@ export default class User extends Component{
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="female">
-                                                <input  id="female" name="gender" type="radio" value={0}
+                                                <input  name="gender" type="radio" value={0}
                                                         className="form-check-input" checked={this.state.gender === 0}
                                                         onChange={this.handlePersonalDetailsChange} required />Female
                                             </label>
@@ -229,7 +232,7 @@ export default class User extends Component{
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="unspecified">
-                                                 <input id="unspecified" name="gender" type="radio" value={-1}
+                                                 <input name="gender" type="radio" value={-1}
                                                         className="form-check-input" checked={this.state.gender === -1}
                                                         onChange={this.handlePersonalDetailsChange} required />Unspecified
                                             </label>
@@ -237,6 +240,17 @@ export default class User extends Component{
                                         </span>
                                     </div>
                                     </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-sm-12 mb-3">
+                                        <label htmlFor="portraitURL" >Portrait URL*: </label>
+                                        <input  type="text" className="form-control" id="portraitURL" name="portraitURL"
+                                                placeholder="Share your picture" value={this.state.portraitURL} required
+                                                onChange={this.handlePersonalDetailsChange} />
+                                    </div>
+                                    {!this.state.errorObj.portraitURL ? <div className="pl-3" style={{color: 'red'}}>
+                                        Please enter a valid URL
+                                    </div> : null }
                                 </div>
                                 <div className="row">
                                     <div className="col-sm-12 mb-3">

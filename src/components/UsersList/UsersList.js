@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import UserCard from '../UserCard/UserCard';
+
 
 class UsersList extends Component {
     constructor(props){
@@ -11,6 +13,10 @@ class UsersList extends Component {
 
     componentDidMount(){
         this.getUsers();
+    }
+
+    handleCardClick = (userID) => {
+        console.log(userID);
     }
 
     getUsers(){
@@ -28,12 +34,11 @@ class UsersList extends Component {
        
         return(
             <div className="container">
-                <h1>Inside UsersList COmponent</h1>
-                <ul>
-                    {this.state.users.map((user, index) => {
-                        return <li key={user.id}>{user.firstName} {user.email }</li>
+                <div className="row">
+                    {this.state.users.map(user => {
+                        return <UserCard click={this.handleCardClick} user={user}/>
                     })}
-                </ul>
+                </div>
             </div>
         );
     }

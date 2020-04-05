@@ -1,0 +1,8 @@
+.user-card{
+    cursor: pointer;
+}
+
+.user-card:hover{
+    border: 2px solid rgb(109, 178, 224);
+    box-shadow: 2px 2px 2px rgb(109, 178, 224);
+}

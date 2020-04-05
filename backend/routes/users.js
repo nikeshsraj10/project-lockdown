@@ -24,7 +24,8 @@ router.route('/add').post((req, res) => {
         gender: +req.body.gender,
         birthdate: Date.parse(req.body.birthdate),
         country: req.body.country,
-        mobile: req.body.mobile
+        mobile: req.body.mobile,
+        portraitURL: req.body.portraitURL
     });
 
     newUser.save()
@@ -43,6 +44,7 @@ router.route('/update/:id').post((req, res) => {
             user.birthdate = Date.parse(req.body.birthdate);
             user.country = req.body.country;
             user.mobile = req.body.mobile;
+            user.portraitURL = req.body.portraitURL;
 
             user.save()
                 .then(() => res.json('User Updated'))

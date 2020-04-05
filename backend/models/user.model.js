@@ -46,6 +46,10 @@ const userSchema = new Schema({
         unique: false,
         trim: true,
     },
+    portraitURL: {
+        type: String,
+        required: false
+    },
 },{
     timestamps: true
 });
