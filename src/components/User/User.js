@@ -18,6 +18,10 @@ const initState = {
     country: COUNTRIES[0],
     mobile: '',
     portraitURL: '',
+    formStatusObj:{
+        readOnly: false,
+        createUser: true
+    },
     errorObj: {
         firstName: true,
         email: true,
@@ -34,6 +38,34 @@ export default class User extends Component{
         super(props);
         this.state = initState;
     }
+
+    componentDidMount(){
+        this.userID = this.props.location.state ? this.props.location.state.userID : undefined;
+        console.log(`Here in User COmponent with userID: ${this.userID}`);
+        if(this.userID){
+            axios.get(`http://localhost:5000/users/${this.userID}`)
+                 .then(response => {
+                    console.log(response.data);
+                    this.setState({
+                        firstName: response.data.firstName || '',
+                        lastName: response.data.lastName || '',
+                        email: response.data.email || '',
+                        gender: response.data.gender || '',
+                        birthdate: new Date(...response.data.birthdate.split('T')[0].split('-')) || '',
+                        country: response.data.country || '',
+                        mobile: response.data.mobile || '',
+                        portraitURL: response.data.portraitURL || '',
+                        formStatusObj: {
+                            readOnly: true,
+                            createUser: false
+                        }
+                    })
+                 })
+                 .catch(err => {
+                     console.log(`Error: ${err}`);
+                 })
+        }
+    }   
 
     handlePersonalDetailsChange = (event) => {
         let {name, value} = event.target;
@@ -125,6 +157,7 @@ export default class User extends Component{
         event.preventDefault();
         const errorObj = this.validateForm();
         if(errorObj.formValid){
+            //Check if update or create new User
             const user = {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
@@ -135,15 +168,26 @@ export default class User extends Component{
                 mobile: this.state.mobile,
                 portraitURL: this.state.portraitURL
             }
-            axios.post('http://localhost:5000/users/add', user)
-                 .then(res => {
-                     console.log(res.data); 
-                 })
-                 .catch(err => console.log(err));
-            this.setState({
-                ...initState
-            })
-            window.location = '/'
+            if(this.state.formStatusObj.createUser){
+                axios.post('http://localhost:5000/users/add', user)
+                     .then(res => {
+                         console.log(res.data); 
+                     })
+                     .catch(err => console.log(err));
+            }else{
+                //Update User
+                axios.post(`http://localhost:5000/users/update/${this.userID}`, user)
+                     .then(res => {
+                         console.log(res.data);
+                     })
+                     .catch(err => {
+                         console.log(err)
+                     });
+                     
+            }
+            this.props.history.push({
+                pathname: '/'
+            });
         }else{
             this.setState({
                 errorObj: {...errorObj}
@@ -161,8 +205,7 @@ export default class User extends Component{
                         <h2 className={["progress-bar", "bg-warning", "text-muted", "pl-2", classes.heading].join(" ")}>Creating a new User</h2>
                     </div>
                     {/* Form Sections Overview */}
-                    <div className="col-sm-9">
-                        {/* <div><i className="fa fa-spinner fa-spin">Font Awesome</i></div> */}
+                    {/* <div className="col-sm-9">
                         <div className={[classes['inline-block'], classes.icons].join(' ')}>
                             <i className="fas fa-user fa-3x"></i>
                             <span className={classes.left}>1.Personal details</span>    
@@ -171,7 +214,7 @@ export default class User extends Component{
                             <i className="fas fa-star fa-3x"></i>
                             <span className={classes.left}>2. Your favorites</span>
                         </div>
-                    </div>
+                    </div> */}
                     {/* Form Begins here */}
                     <div className="container">
                         <div className="text-center pl-4">
@@ -184,7 +227,7 @@ export default class User extends Component{
                                         <label htmlFor="firstName" >First Name*: </label>
                                         <input  type="text" className="form-control" id="firstName" name="firstName"
                                                 placeholder="First Name" value={this.state.firstName} maxLength="20"
-                                                onChange={this.handlePersonalDetailsChange} required/>
+                                                onChange={this.handlePersonalDetailsChange} readOnly={this.state.formStatusObj.readOnly} required/>
                                     </div>
                                     {!this.state.errorObj.firstName ? <div className="pl-3" style={{color: 'red'}}>
                                     Please enter a valid First Name
@@ -195,7 +238,7 @@ export default class User extends Component{
                                         <label htmlFor="lastName" >Last Name: </label>
                                         <input  type="text" className="form-control" id="lastName" name="lastName"
                                                 placeholder="Last Name" value={this.state.lastName} maxLength="20"
-                                                onChange={this.handlePersonalDetailsChange}/>
+                                                onChange={this.handlePersonalDetailsChange} readOnly={this.state.formStatusObj.readOnly}/>
                                 </div>
     
                                 </div>
@@ -204,7 +247,7 @@ export default class User extends Component{
                                         <label htmlFor="email" >Email Address*: </label>
                                         <input  type="email" className="form-control" id="email" name="email"
                                                 placeholder="you@example.com" value={this.state.email}
-                                                onChange={this.handlePersonalDetailsChange} required={true} />
+                                                onChange={this.handlePersonalDetailsChange} readOnly={this.state.formStatusObj.readOnly} required={true} />
                                     </div>
                                     {!this.state.errorObj.email ? <div className="pl-3" style={{color: 'red'}}>
                                         Please enter a valid email address
@@ -216,7 +259,7 @@ export default class User extends Component{
                                     <div className="form-group">
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="male">
-                                             <input name="gender" type="radio" value={1}
+                                             <input name="gender" type="radio" value={1} readOnly={this.state.formStatusObj.readOnly}
                                                     className="form-check-input" checked={this.state.gender === 1}
                                                     onChange={this.handlePersonalDetailsChange} required />Male
                                             </label>
@@ -224,7 +267,7 @@ export default class User extends Component{
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="female">
-                                                <input  name="gender" type="radio" value={0}
+                                                <input  name="gender" type="radio" value={0} readOnly={this.state.formStatusObj.readOnly}
                                                         className="form-check-input" checked={this.state.gender === 0}
                                                         onChange={this.handlePersonalDetailsChange} required />Female
                                             </label>
@@ -232,7 +275,7 @@ export default class User extends Component{
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="unspecified">
-                                                 <input name="gender" type="radio" value={-1}
+                                                 <input name="gender" type="radio" value={-1} readOnly={this.state.formStatusObj.readOnly}
                                                         className="form-check-input" checked={this.state.gender === -1}
                                                         onChange={this.handlePersonalDetailsChange} required />Unspecified
                                             </label>
@@ -243,10 +286,10 @@ export default class User extends Component{
                                 </div>
                                 <div className="row">
                                     <div className="col-sm-12 mb-3">
-                                        <label htmlFor="portraitURL" >Portrait URL*: </label>
+                                        <label htmlFor="portraitURL" >Portrait URL: </label>
                                         <input  type="text" className="form-control" id="portraitURL" name="portraitURL"
-                                                placeholder="Share your picture" value={this.state.portraitURL} required
-                                                onChange={this.handlePersonalDetailsChange} />
+                                                placeholder="Share your picture" value={this.state.portraitURL}
+                                                onChange={this.handlePersonalDetailsChange} readOnly={this.state.formStatusObj.readOnly}/>
                                     </div>
                                     {!this.state.errorObj.portraitURL ? <div className="pl-3" style={{color: 'red'}}>
                                         Please enter a valid URL
@@ -257,7 +300,7 @@ export default class User extends Component{
                                         <label htmlFor="birthday" >Date of Birth*: </label>
                                         <div className="input-group-addon col-sm-12" style={{textAlign: "initial"}}>
                                             <DatePicker selected={this.state.birthdate ? this.state.birthdate : null} 
-                                                        onChange={this.handleBirthdayChange} />
+                                                        onChange={this.handleBirthdayChange} readOnly={this.state.formStatusObj.readOnly}/>
                                         </div>
                                     </div>
                                     {!this.state.errorObj.birthdate ? <div className="pl-3" style={{color: 'red'}}>
@@ -267,7 +310,8 @@ export default class User extends Component{
                                 <div className="row">
                                     <div className="col-sm-12 mb-3">
                                         <label htmlFor="country" >Country*: </label>
-                                        <select name="country" onChange={this.handleCountryChange} value={this.state.country} className="custom-select d-block w-100" id="country">
+                                        <select name="country" onChange={this.handleCountryChange} value={this.state.country}
+                                                className="custom-select d-block w-100" id="country" disabled={this.state.formStatusObj.readOnly}>
                                             {
                                                 COUNTRIES.map((country, index) => <option key={index}>{country}</option>)
                                             }
@@ -279,14 +323,22 @@ export default class User extends Component{
                                         <label htmlFor="mobile" >Mobile Number*: </label>
                                         <input  type="text" className="form-control" id="mobile" name="mobile"
                                                 placeholder="Mobile" value={this.state.mobile} required
-                                                onChange={this.handlePersonalDetailsChange} />
+                                                onChange={this.handlePersonalDetailsChange} readOnly={this.state.formStatusObj.readOnly}/>
                                     </div>
                                     {!this.state.errorObj.mobile ? <div className="pl-3" style={{color: 'red'}}>
                                         Please enter a valid mobile number
                                     </div> : null}
                                 </div>
                                 <hr className="mb-4"/>
-                                <button className="btn btn-primary btn-lg btn-block" onClick={this.handleSubmit} type="submit">Add User</button>
+                                
+                                    {   this.state.formStatusObj.createUser ? 
+                                        <button className="btn btn-primary btn-lg btn-block" onClick={this.handleSubmit} type="submit">Add User</button> :
+                                        <div className="col-sm-12">
+                                            <button className="col-sm-5 m-1 btn btn-secondary"  type="cancel">Cancel</button>
+                                            <button className="col-sm-5 m-1 btn btn-primary" onClick={this.handleSubmit} type="submit">Update User</button>
+                                        </div>
+                                    }
+                                
                             </form>
                         </div>
                     </div>

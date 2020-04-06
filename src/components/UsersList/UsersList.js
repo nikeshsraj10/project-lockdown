@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import UserCard from '../UserCard/UserCard';
 
-
 class UsersList extends Component {
     constructor(props){
         super(props);
@@ -17,6 +16,11 @@ class UsersList extends Component {
 
     handleCardClick = (userID) => {
         console.log(userID);
+        //Helps navigating to /user path
+        this.props.history.push({
+            pathname: '/user',
+            state: {'userID': userID}
+        });
     }
 
     getUsers(){

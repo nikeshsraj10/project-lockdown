@@ -30,7 +30,7 @@ const Header = (props) => (
                 <button className="btn btn-secondary my-2 my-sm-0 mr-2" type="submit">Search</button>
             </form>
             <div id="addUserButton">
-                <Link to="/createUser" className={["btn", "btn-primary", classes.left].join(' ')}>Add User</Link>
+                <Link to="/user" className={["btn", "btn-primary", classes.left].join(' ')}>Add User</Link>
             </div>
             </div>
     </nav>

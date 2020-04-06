@@ -14,7 +14,7 @@ function App() {
           <Header/>
           <br/>
           <Route path="/" exact component={UsersList}/>
-          <Route path="/createUser" component={User}/> 
+          <Route path="/user" component={User}/> 
         </div>
       </Router>
     </div>
