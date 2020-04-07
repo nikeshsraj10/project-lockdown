@@ -40,7 +40,7 @@ class UsersList extends Component {
             <div className="container">
                 <div className="row">
                     {this.state.users.map(user => {
-                        return <UserCard click={this.handleCardClick} user={user}/>
+                        return <UserCard click={this.handleCardClick} user={user} key={user._id}/>
                     })}
                 </div>
             </div>

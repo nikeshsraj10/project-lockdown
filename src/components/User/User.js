@@ -30,10 +30,9 @@ const initState = {
         portraitURL: true,
         formValid: true
     }
-
 }
-
 export default class User extends Component{
+
     constructor(props){
         super(props);
         this.state = initState;
@@ -41,16 +40,17 @@ export default class User extends Component{
 
     componentDidMount(){
         this.userID = this.props.location.state ? this.props.location.state.userID : undefined;
-        console.log(`Here in User COmponent with userID: ${this.userID}`);
+        console.log(`Here in User Component with userID: ${this.userID}`);
         if(this.userID){
             axios.get(`http://localhost:5000/users/${this.userID}`)
                  .then(response => {
                     console.log(response.data);
+                    this.userData = response.data;
                     this.setState({
                         firstName: response.data.firstName || '',
                         lastName: response.data.lastName || '',
                         email: response.data.email || '',
-                        gender: response.data.gender || '',
+                        gender: response.data.gender,
                         birthdate: new Date(...response.data.birthdate.split('T')[0].split('-')) || '',
                         country: response.data.country || '',
                         mobile: response.data.mobile || '',
@@ -89,6 +89,39 @@ export default class User extends Component{
         })
     }
 
+    getUserObj = (user) => {
+        return {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            gender: user.gender,
+            birthdate: user.birthdate,
+            country: user.country,
+            mobile: user.mobile,
+            portraitURL: user.portraitURL
+        }
+    }
+
+    editUser = () => {
+        this.setState((prevState, prevProps) => {
+           return {
+                formStatusObj: {
+                    readOnly: false,
+                    createUser: prevState.formStatusObj.createUser
+                }
+            }
+        })
+    }
+    //^^example of using setState with prevState param ---Could have just set it to false as edit happens only when clicked on a tile
+    cancelEdit = () => {
+        this.setState({
+            ...this.getUserObj(this.userData),
+            formStatusObj: {
+                readOnly: true,
+                createUser: false
+            }
+        })
+    }
     validateForm = () => {
         let errorObj = {
             firstName: false,
@@ -158,17 +191,9 @@ export default class User extends Component{
         const errorObj = this.validateForm();
         if(errorObj.formValid){
             //Check if update or create new User
-            const user = {
-                firstName: this.state.firstName,
-                lastName: this.state.lastName,
-                email: this.state.email,
-                gender: this.state.gender,
-                birthdate: this.state.birthdate,
-                country: this.state.country,
-                mobile: this.state.mobile,
-                portraitURL: this.state.portraitURL
-            }
+            const user = this.getUserObj(this.state);
             if(this.state.formStatusObj.createUser){
+                //Create User
                 axios.post('http://localhost:5000/users/add', user)
                      .then(res => {
                          console.log(res.data); 
@@ -196,7 +221,20 @@ export default class User extends Component{
         }
     }
 
-    render(){
+    render(){       
+        let buttons;
+        if(this.state.formStatusObj.createUser){
+            buttons = <button className="btn btn-primary btn-lg btn-block" onClick={this.handleSubmit} type="submit">Add User</button>;
+        }else{
+            if(this.state.formStatusObj.readOnly){
+                buttons = <button className="col-sm-12 btn btn-primary btn-lg" onClick={this.editUser}>Edit User</button>;
+            }else{
+                buttons =   <div className="col-sm-12">
+                                <button className="col-sm-5 m-1 btn btn-secondary" onClick={this.cancelEdit}>Cancel</button>
+                                <button className="col-sm-5 m-1 btn btn-primary" onClick={this.handleSubmit} type="submit">Update User</button>
+                            </div>
+            }
+        }
         return(
             <React.Fragment>
                 <div className={classes.page}>
@@ -259,7 +297,7 @@ export default class User extends Component{
                                     <div className="form-group">
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="male">
-                                             <input name="gender" type="radio" value={1} readOnly={this.state.formStatusObj.readOnly}
+                                             <input name="gender" type="radio" value={1} disabled={this.state.formStatusObj.readOnly}
                                                     className="form-check-input" checked={this.state.gender === 1}
                                                     onChange={this.handlePersonalDetailsChange} required />Male
                                             </label>
@@ -267,7 +305,7 @@ export default class User extends Component{
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="female">
-                                                <input  name="gender" type="radio" value={0} readOnly={this.state.formStatusObj.readOnly}
+                                                <input  name="gender" type="radio" value={0} disabled={this.state.formStatusObj.readOnly}
                                                         className="form-check-input" checked={this.state.gender === 0}
                                                         onChange={this.handlePersonalDetailsChange} required />Female
                                             </label>
@@ -275,7 +313,7 @@ export default class User extends Component{
                                         </span>
                                         <span className={["custom-control", "custom-checkbox", "p-3", classes.left].join(' ')}>
                                             <label  htmlFor="unspecified">
-                                                 <input name="gender" type="radio" value={-1} readOnly={this.state.formStatusObj.readOnly}
+                                                 <input name="gender" type="radio" value={-1} disabled={this.state.formStatusObj.readOnly}
                                                         className="form-check-input" checked={this.state.gender === -1}
                                                         onChange={this.handlePersonalDetailsChange} required />Unspecified
                                             </label>
@@ -330,15 +368,7 @@ export default class User extends Component{
                                     </div> : null}
                                 </div>
                                 <hr className="mb-4"/>
-                                
-                                    {   this.state.formStatusObj.createUser ? 
-                                        <button className="btn btn-primary btn-lg btn-block" onClick={this.handleSubmit} type="submit">Add User</button> :
-                                        <div className="col-sm-12">
-                                            <button className="col-sm-5 m-1 btn btn-secondary"  type="cancel">Cancel</button>
-                                            <button className="col-sm-5 m-1 btn btn-primary" onClick={this.handleSubmit} type="submit">Update User</button>
-                                        </div>
-                                    }
-                                
+                                {buttons}                               
                             </form>
                         </div>
                     </div>
