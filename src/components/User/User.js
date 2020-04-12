@@ -39,7 +39,7 @@ export default class User extends Component{
     }
 
     componentDidMount(){
-        this.userID = this.props.location.state ? this.props.location.state.userID : undefined;
+        this.userID = this.props.location && this.props.location.state ? this.props.location.state.userID : undefined;
         console.log(`Here in User Component with userID: ${this.userID}`);
         if(this.userID){
             axios.get(`http://localhost:5000/users/${this.userID}`)
@@ -224,14 +224,14 @@ export default class User extends Component{
     render(){       
         let buttons;
         if(this.state.formStatusObj.createUser){
-            buttons = <button className="btn btn-primary btn-lg btn-block" onClick={this.handleSubmit} type="submit">Add User</button>;
+            buttons = <button data-testid="addUserButton" className="btn btn-primary btn-lg btn-block" onClick={this.handleSubmit} type="submit">Add User</button>;
         }else{
             if(this.state.formStatusObj.readOnly){
                 buttons = <button className="col-sm-12 btn btn-primary btn-lg" onClick={this.editUser}>Edit User</button>;
             }else{
                 buttons =   <div className="col-sm-12">
                                 <button className="col-sm-5 m-1 btn btn-secondary" onClick={this.cancelEdit}>Cancel</button>
-                                <button className="col-sm-5 m-1 btn btn-primary" onClick={this.handleSubmit} type="submit">Update User</button>
+                                <button data-testid="updateUser" className="col-sm-5 m-1 btn btn-primary" onClick={this.handleSubmit} type="submit">Update User</button>
                             </div>
             }
         }
@@ -337,7 +337,7 @@ export default class User extends Component{
                                     <div className="col-sm-12 mb-3">
                                         <label htmlFor="birthday" >Date of Birth*: </label>
                                         <div className="input-group-addon col-sm-12" style={{textAlign: "initial"}}>
-                                            <DatePicker selected={this.state.birthdate ? this.state.birthdate : null} 
+                                            <DatePicker selected={this.state.birthdate ? this.state.birthdate : null}
                                                         onChange={this.handleBirthdayChange} readOnly={this.state.formStatusObj.readOnly}/>
                                         </div>
                                     </div>

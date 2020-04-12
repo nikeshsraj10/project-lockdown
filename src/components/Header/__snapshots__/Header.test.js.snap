@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header Component Test Suite matches snapshot 1`] = `
+<nav
+  className="navbar navbar-expand-md navbar-dark bg-dark"
+>
+  <a
+    className="navbar-brand"
+    href="/"
+    onClick={[Function]}
+  >
+    User List
+  </a>
+  <button
+    aria-controls="navbarsExampleDefault"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+    className="navbar-toggler"
+    data-target="#navbarsExampleDefault"
+    data-toggle="collapse"
+    type="button"
+  >
+    <span
+      className="navbar-toggler-icon"
+    />
+  </button>
+  <div
+    className="collapse navbar-collapse"
+    id="navbarsExampleDefault"
+  >
+    <ul
+      className="navbar-nav mr-auto"
+    >
+      <li
+        className="nav-item active"
+      >
+        <a
+          className="nav-link"
+          href="/"
+          onClick={[Function]}
+        >
+          <div
+            className="left"
+          >
+            Home
+          </div>
+          <span
+            className="sr-only"
+          >
+            (current)
+          </span>
+        </a>
+      </li>
+    </ul>
+    <form
+      className="form-inline my-2 my-lg-0"
+      style={
+        Object {
+          "marginRight": "0px",
+        }
+      }
+    >
+      <input
+        aria-label="Search"
+        className="form-control mr-sm-2"
+        placeholder="Search"
+        type="text"
+      />
+      <button
+        className="btn btn-secondary my-2 my-sm-0 mr-2"
+        type="submit"
+      >
+        Search
+      </button>
+    </form>
+    <div
+      id="addUserButton"
+    >
+      <a
+        className="btn btn-primary left"
+        href="/user"
+        onClick={[Function]}
+      >
+        Add User
+      </a>
+    </div>
+  </div>
+</nav>
+`;
+
+exports[`matches snapshot 1`] = `
+<nav
+  className="navbar navbar-expand-md navbar-dark bg-dark"
+>
+  <a
+    className="navbar-brand"
+    href="/"
+    onClick={[Function]}
+  >
+    User List
+  </a>
+  <button
+    aria-controls="navbarsExampleDefault"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+    className="navbar-toggler"
+    data-target="#navbarsExampleDefault"
+    data-toggle="collapse"
+    type="button"
+  >
+    <span
+      className="navbar-toggler-icon"
+    />
+  </button>
+  <div
+    className="collapse navbar-collapse"
+    id="navbarsExampleDefault"
+  >
+    <ul
+      className="navbar-nav mr-auto"
+    >
+      <li
+        className="nav-item active"
+      >
+        <a
+          className="nav-link"
+          href="/"
+          onClick={[Function]}
+        >
+          <div
+            className="left"
+          >
+            Home
+          </div>
+          <span
+            className="sr-only"
+          >
+            (current)
+          </span>
+        </a>
+      </li>
+    </ul>
+    <form
+      className="form-inline my-2 my-lg-0"
+      style={
+        Object {
+          "marginRight": "0px",
+        }
+      }
+    >
+      <input
+        aria-label="Search"
+        className="form-control mr-sm-2"
+        placeholder="Search"
+        type="text"
+      />
+      <button
+        className="btn btn-secondary my-2 my-sm-0 mr-2"
+        type="submit"
+      >
+        Search
+      </button>
+    </form>
+    <div
+      id="addUserButton"
+    >
+      <a
+        className="btn btn-primary left"
+        href="/user"
+        onClick={[Function]}
+      >
+        Add User
+      </a>
+    </div>
+  </div>
+</nav>
+`;
