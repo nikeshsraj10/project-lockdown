@@ -19,10 +19,13 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
+    "backend-install": "npm install --prefix backend",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "backend": "cd backend && nodemon server.js",
+    "dev": "concurrently \"npm start\" \"npm run backend\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -41,5 +44,6 @@
   },
   "devDependencies": {
     "react-test-renderer": "^16.13.1"
-  }
+  },
+  "proxy":"http://localhost:5000"
 }
